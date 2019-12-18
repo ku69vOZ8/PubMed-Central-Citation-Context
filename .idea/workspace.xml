@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="ec7f8806-de52-4033-b842-b7a011a028fc" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pipfile" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pipfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alembic.ini" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/alembic/README" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/alembic/env.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/alembic/script.py.mako" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/alembic/versions/138dc1b1cdfa_.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/alembic/versions/150776c20c8c_.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/alembic/versions/15205f4a6d86_.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/alembic/versions/2c3de8a823f4_added_index_for_cite_citer_id.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/alembic/versions/3604e4cf2564_.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/alembic/versions/5a8653d9cfda_.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/alembic/versions/8e0da99d8b93_.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/get_info_from_pmc.py" beforeDir="false" afterPath="$PROJECT_DIR$/get_info_from_pmc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/manage.py" beforeDir="false" afterPath="$PROJECT_DIR$/manage.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/models.py" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="Citememe Mining" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/get_info_from_pmc.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-330">
+              <caret line="1" selection-start-line="1" selection-start-column="2" selection-end-line="5" selection-end-column="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Pipfile.lock">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Pipfile">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="97">
+              <caret line="14" column="12" selection-start-line="14" selection-start-column="12" selection-end-line="14" selection-end-column="12" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/manage.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="229">
+              <caret line="213" column="3" selection-start-line="213" selection-start-column="3" selection-end-line="213" selection-end-column="21" />
+              <folding>
+                <element signature="e#0#24#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/models.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="30">
+              <caret line="7" column="21" selection-start-line="7" selection-start-column="21" selection-end-line="7" selection-end-column="21" />
+              <folding>
+                <element signature="e#0#31#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>etree.Xpath</find>
+      <find>publication_type_xpath</find>
+      <find>publication_type_list</find>
+      <find>etree.XPath</find>
+      <find>get_citation_contexts</find>
+      <find>Can't find endcite</find>
+      <find>unes</find>
+      <find>-</find>
+      <find>–-</find>
+      <find>citation</find>
+      <find>CitationAnchorPosition</find>
+      <find>citationcontexttext_id</find>
+      <find>len(seqs) is 0, that must be wrong</find>
+      <find>former_bibr_seq</find>
+      <find>re.sub</find>
+      <find>maybe there are other bibr(aff)_xpath</find>
+      <find>matchO</find>
+      <find>re.</find>
+      <find>html</find>
+      <find>–</find>
+      <find>r&quot;[–-]&quot;</find>
+      <find>[–-]</find>
+      <find>build_citation_index</find>
+      <find>6196888</find>
+      <find>PMID</find>
+      <find>end_of_sentence_punctuation</find>
+      <find>session.commit()</find>
+      <find>local_path</find>
+      <find>index=True</find>
+      <find>add_non_pmc_pm_references_for_coword_paper</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>literature_query</replace>
+      <replace>cite_query</replace>
+      <replace>/</replace>
+    </replaceStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/app/main/__init__.py" />
+        <option value="$PROJECT_DIR$/app/auth/views.py" />
+        <option value="$PROJECT_DIR$/app/auth/forms.py" />
+        <option value="$PROJECT_DIR$/app/api_1_0/authentication.py" />
+        <option value="$PROJECT_DIR$/app/api_1_0/__init__.py" />
+        <option value="$PROJECT_DIR$/app/auth/__init__.py" />
+        <option value="$PROJECT_DIR$/config.py" />
+        <option value="$PROJECT_DIR$/app/models.py" />
+        <option value="$USER_HOME$/AppData/Local/Temp/BNZ.5bf7a0678e14e6e/obtaning_pmc_ftp.py" />
+        <option value="$PROJECT_DIR$/obtaning_pmc_ftp.py" />
+        <option value="$PROJECT_DIR$/Pipfile" />
+        <option value="$PROJECT_DIR$/Pipfile.lock" />
+        <option value="$PROJECT_DIR$/alembic/versions/c1ce3725b006_.py" />
+        <option value="$PROJECT_DIR$/alembic/env.py" />
+        <option value="$PROJECT_DIR$/alembic_citememe/env.py" />
+        <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/data/20190108 pubmed id list 2489 cited ids.csv" />
+        <option value="$PROJECT_DIR$/data/20190108 pubmed id list 2489 cited ids 1376 test first 100.csv" />
+        <option value="$PROJECT_DIR$/data/pmc_uid list 9398.csv" />
+        <option value="$PROJECT_DIR$/data/cited ids 1376.csv" />
+        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/data/20190108 pubmed id list 2489.txt" />
+        <option value="$PROJECT_DIR$/data/20190108 pubmed MEDLINE 2489.txt" />
+        <option value="$PROJECT_DIR$/data/pubmed id list 2489.csv" />
+        <option value="$PROJECT_DIR$/alembic.ini" />
+        <option value="$PROJECT_DIR$/models.py" />
+        <option value="$PROJECT_DIR$/get_info_from_pmc.py" />
+        <option value="$PROJECT_DIR$/manage.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="187" />
+    <option name="y" value="46" />
+    <option name="width" value="1536" />
+    <option name="height" value="483" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State />
+          <State>
+            <id>Python</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>PyCompatibilityInspection</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="Citememe Mining" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Citememe Mining" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Citememe Mining\data" />
+      <recent name="D:\Citememe Mining" />
+      <recent name="D:\Citememe Mining\alembic\versions" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Citememe Mining" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="manage" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Citememe Mining" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/manage.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.manage" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="StructureViewFactory">
+    <option name="AUTOSCROLL_MODE" value="false" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ec7f8806-de52-4033-b842-b7a011a028fc" name="Default Changelist" comment="" />
+      <created>1542675181900</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1542675181900</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
+    <layout>
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.23935091" visible="true" weight="0.36457506" />
+      <window_info id="Structure" order="1" sideWeight="0.7606491" weight="0.25655282" />
+      <window_info id="Favorites" order="2" weight="0.32962668" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3250444" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49960285" weight="0.3232682" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.5133215" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.25222024" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.3285968" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="8" sideWeight="0.4988086" visible="true" weight="0.43339255" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50119144" side_tool="true" weight="0.3285968" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.3143872" />
+      <window_info anchor="bottom" id="Regex Tester" order="11" weight="0.3361045" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.2497979" />
+    </layout>
+    <layout-to-restore>
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.23935091" visible="true" weight="0.36457506" />
+      <window_info id="Structure" order="1" sideWeight="0.7606491" weight="0.25655282" />
+      <window_info id="Favorites" order="2" weight="0.32962668" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3250444" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49960285" visible="true" weight="0.23268206" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.5133215" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.25222024" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.3285968" />
+      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.4988086" weight="0.43339255" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50119144" side_tool="true" weight="0.3285968" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.3143872" />
+      <window_info anchor="bottom" id="Regex Tester" order="11" weight="0.3361045" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.2497979" />
+    </layout-to-restore>
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="Pipfile" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="sentences[1]" />
+        <watch expression="next_sent" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$USER_HOME$/AppData/Local/Temp/BNZ.5c0a1bee15110e1/Citence.py" />
+    <entry file="file://$USER_HOME$/AppData/Local/Temp/BNZ.5c0a1c54152a28d/HighFreqNPandWords.py" />
+    <entry file="file://$USER_HOME$/AppData/Local/Temp/BNZ.5c0a1c951539e33/NounPhrasesProcess.py" />
+    <entry file="file://$PROJECT_DIR$/alembic/versions/380abbef85a4_.py" />
+    <entry file="file://$USER_HOME$/.virtualenvs/Citememe_Mining-813bN03M/Lib/site-packages/spacy/language.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="113">
+          <caret line="336" selection-start-line="336" selection-end-line="336" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/non_comm_use.A-B.xml.sqlite-journal" />
+    <entry file="file://$PROJECT_DIR$/alembic/versions/e292b04483c7_.py" />
+    <entry file="file://$PROJECT_DIR$/alembic/versions/c1ce3725b006_.py" />
+    <entry file="file://$PROJECT_DIR$/alembic/README">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/a.ini" />
+    <entry file="file://$PROJECT_DIR$/xml_files/1/PMC5778484.nxml" />
+    <entry file="file://$PROJECT_DIR$/alembic/versions/cf45ee829fb6_.py" />
+    <entry file="file://$PROJECT_DIR$/alembic/versions/138dc1b1cdfa_.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/alembic/versions/15205f4a6d86_.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/alembic_citememe/env.py" />
+    <entry file="file://$PROJECT_DIR$/alembic/env.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="17" column="14" selection-end-line="74" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/cited 10 times or more 11507.csv" />
+    <entry file="file://$PROJECT_DIR$/data/cited 450 times or more 1.csv" />
+    <entry file="file://$PROJECT_DIR$/data/cited 2 times or more 449169.csv" />
+    <entry file="file://$PROJECT_DIR$/data/cited 1 time or more 1802380.csv" />
+    <entry file="file://$PROJECT_DIR$/.gitattributes" />
+    <entry file="file://$PROJECT_DIR$/alembic/script.py.mako">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-540" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/alembic/versions/150776c20c8c_.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-523" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/alembic/versions/5a8653d9cfda_.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-389" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/alembic/versions/2c3de8a823f4_added_index_for_cite_citer_id.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-360" />
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.virtualenvs/Citememe_Mining-813bN03M/Lib/site-packages/sqlalchemy/orm/relationships.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="53">
+          <caret line="1851" selection-start-line="1851" selection-end-line="1851" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/20190108 pubmed id list 2489 cited ids 1376 test first 100.csv" />
+    <entry file="file://$USER_HOME$/.virtualenvs/Citememe_Mining-813bN03M/Lib/re.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="52">
+          <caret line="172" selection-start-line="172" selection-end-line="172" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37/Lib/html/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#50#66#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/output.txt" />
+    <entry file="file://$PROJECT_DIR$/data/20190108 pubmed id list 2489.txt" />
+    <entry file="file://$PROJECT_DIR$/data/20190108 pubmed MEDLINE 2489.txt" />
+    <entry file="file://$PROJECT_DIR$/data/pubmed id list 2489.csv" />
+    <entry file="file://$PROJECT_DIR$/data/cited ids 1376.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="32100">
+          <caret line="1070" column="7" selection-start-line="1070" selection-start-column="7" selection-end-line="1070" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/citationcontexttexts.txt" />
+    <entry file="file://$PROJECT_DIR$/data/20190108 pubmed id list 2488.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/citationcontexttexts.csv">
+      <provider selected="true" editor-type-id="LargeFileEditor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/pubmed id list 2489 output_map.txt" />
+    <entry file="file://$PROJECT_DIR$/data/localpath.csv">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/cited_id of more than X cite_nums.sql">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret selection-end-line="4" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/pubmed id list 2489 output.txt" />
+    <entry file="file://$PROJECT_DIR$/data/pmid num_cite and num_citationcontexts.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="292">
+          <caret line="2488" column="12" selection-start-line="2488" selection-start-column="12" selection-end-line="2488" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/pmc_uid list 9398.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7649">
+          <caret line="9398" column="7" selection-start-line="9398" selection-start-column="7" selection-end-line="9398" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/alembic.ini">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-855">
+          <caret line="37" column="2" selection-start-line="37" selection-start-column="2" selection-end-line="37" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="FIRST">
+          <first_editor>
+            <caret column="2" selection-start-column="2" selection-end-column="2" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pipfile.lock">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/get_info_from_pmc.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-330">
+          <caret line="1" selection-start-line="1" selection-start-column="2" selection-end-line="5" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/manage.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="229">
+          <caret line="213" column="3" selection-start-line="213" selection-start-column="3" selection-end-line="213" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#24#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="7" column="21" selection-start-line="7" selection-start-column="21" selection-end-line="7" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pipfile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="97">
+          <caret line="14" column="12" selection-start-line="14" selection-start-column="12" selection-end-line="14" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="regexState">
+    <option name="map">
+      <map>
+        <entry key="flags" value="0" />
+        <entry key="mode" value="0" />
+        <entry key="regex" value="^[A-Z]||\d||\'||\&quot;" />
+        <entry key="replacement" value="" />
+        <entry key="text" value="spicata essential oil, like carvone, limonene and menthol [ ~~30~~, ]." />
+      </map>
+    </option>
+  </component>
+</project>
