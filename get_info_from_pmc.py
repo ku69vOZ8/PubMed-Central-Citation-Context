@@ -1,188 +1,110 @@
+from io import BytesIO
 from lxml import etree
-# from models import Literature
-# from models import Cite
-# from models import CitationContext
-# from models import CitationContextText
-# from models import Session
-# from models import CitationAnchorPosition
 import re
 import os
 import html
 import en_core_web_md
-import pandas as pd
+
+from models import Literature
+from models import Cite
+from models import Citance
+from models import CitanceText
+from models import CiteParagraphText
+import manage
+
+rootDir = manage.rootDir
+
+# from models import CitationAnchorPosition
+# from models import CiteMeme
+# import pandas as pd
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 article_namespace = ""
 nlp = en_core_web_md.load()
 
-citation_context_abbreviations = ['cf.', 'e.g.', 'i.e.', 'etc.', 'viz.', 'vs.', 'et al.', 'p.', 'pp.', 'Fig.', 'No.']
-
+citation_context_abbreviations = ['cf.', 'e.g.', 'i.e.', 'etc.', 'viz.', 'vs.', 'et al.', \
+                                  'p.', 'pp.', 'Fig.', 'No.']
 end_of_sentence_punctuation = ['.', '?', "!", "~~"]
 
 
-# def add_citation_contexts(csv_filename):
-#     # To make sure every cite has citationcontext
-#     # This part is to solve the problem like 3-10 when 4..9
-#     # has no ID in the content
-#
-#     session = Session()
-#     literature_query = session.query(Literature)
-#     cite_query = session.query(Cite)
-#     citationcontext_query = session.query(CitationContext)
-#
-#     dataframe = pd.read_csv(csv_filename)
-#     for count, cited_id in enumerate(dataframe['cited_id']):
-#         cites = cite_query.filter_by(cited_id=cited_id)
-#         print(count + 1)
-#         former_cite = None
-#         for cite in cites:
-#             citationcontexts = citationcontext_query.filter_by(cite=cite).all()
-#             if citationcontexts is None:
-#                 citationcontext = CitationContext(cite=cite,
-#                                                   citationcontext=former_cite.citationcontexttext)
-#                 session.add(citationcontext)
-#             former_cite = cite
-#         session.commit()
+def build_citation_index_for_each_pmc(infile):
+    fname = os.path.basename(infile)
+    pmc_uid = re.sub(r'\D', "", fname)
 
-def get_citation_contexts_by_pmc_uid(pmc_uid):
-    session = Session()
-    literature_query = session.query(Literature)
-    literature = literature_query.filter_by(pmc_uid=pmc_uid).first()
-    if literature:
-        infile = literature.local_path
-        print(literature.pmc_uid)
-        print(infile)
-        target_tag = 'p'
-        get_general_method(target_tag, infile, get_citation_contexts_for_each_pmc, literature)
+    temp_literature_with_pmc_uid = Literature.objects(pmc_uid=pmc_uid).first()
 
-
-def get_citation_contexts_by_cited_list(csv_filename):
-    session = Session()
-    literature_query = session.query(Literature)
-    cite_query = session.query(Cite)
-
-    dataframe = pd.read_csv(csv_filename)
-    for count, cited_id in enumerate(dataframe['cited_id']):
-        cites = cite_query.filter_by(cited_id=cited_id).all()
-        print(count + 1)
-        for cite in cites:
-            literature = literature_query.filter_by(id=cite.citer_id).first()
-
-            if (literature is None) or (
-                    literature.if_citation_context_gotten is True):
-                continue
-
-            literature.if_citation_context_gotten = True
-            session.add(literature)
-            print(literature.pmc_uid)
-            infile = literature.local_path
-            # print(infile)
-
-            target_tag = 'p'
-            get_general_method(target_tag, infile, get_citation_contexts_for_each_pmc, literature)
-
-
-def build_citation_index_for_each_pmc(infile, pmc_uid):
-    # # To find the pmc_id
-    # pmc_uid = article_id_find(root, "pmc")
-    #
-    # if pmc_uid is None:
-    #     # print("Can not find the pmc_uid, the program will not proceed.")
-    #     return
-
-    session = Session()
-    literature_query = session.query(Literature)
+    if temp_literature_with_pmc_uid:
+        if temp_literature_with_pmc_uid.fully_updated:
+            print("Added and fully updated. Continue!")
+            return
+        else:
+            print("Not fully updated. Update it.")
+            temp_literature_with_pmc_uid.delete()
 
     literature = Literature()
-    temp_literature_with_pmc_uid = literature_query.filter_by(pmc_uid=pmc_uid).first()
-    if temp_literature_with_pmc_uid:
-        literature = temp_literature_with_pmc_uid
-    else:
-        parser = etree.XMLParser(ns_clean=True)
-        try:
-            tree = etree.parse(infile, parser)
-        except etree.XMLSyntaxError as e:
-            print(e)
-            return
 
-        root = tree.getroot()
+    # start_time = time.time()
 
-        # To find the pmid (or pubmed id)
-        pmid = article_id_find(root, "pmid")
-        # print(pmid)
-        # Literature already been added as a reference.
-        # The task next is to update the info for the original reference.
-        if pmid:
-            temp_literature_by_pmid = literature_query.filter_by(pmid=pmid).first()
-            if temp_literature_by_pmid:
-                literature = temp_literature_by_pmid
-            else:
-                literature.pmid = pmid
-
-        literature.pmc_uid = pmc_uid
-        literature.local_path = infile
-
-    session.add(literature)
-
-    # To obtain the reference info
-    target_tag = 'ref'
-    get_general_method(target_tag, infile, get_reference, literature)
-
-
-def build_citation_index_for_each_pmc_with_pubmed_ref(infile, pmc_uid):
-    # # To find the pmc_id
-    # pmc_uid = article_id_find(root, "pmc")
-    #
-    # if pmc_uid is None:
-    #     # print("Can not find the pmc_uid, the program will not proceed.")
-    #     return
-
-    session = Session()
-    literature_query = session.query(Literature)
-
-    temp_literature_with_pmc_uid = literature_query.filter_by(pmc_uid=pmc_uid).first()
-    if temp_literature_with_pmc_uid is not None:
-        '''
-        print(
-            "Updated already, pmc_uid is {0}, return.".format(
-                pmc_uid
-            )
-        )
-         '''
+    try:
+        with open(infile, "rb") as f:
+            xml = f.read()
+    except OSError:
+        print(f"OSError for pmc_uid: {pmc_uid}.")
         return
-    # print(pmc_uid)
 
+    # end_time = time.time()
+    # print(f"Open file {end_time - start_time} seconds.")
+
+    # start_time = time.time()
     parser = etree.XMLParser(ns_clean=True)
     try:
-        tree = etree.parse(infile, parser)
+        tree = etree.parse(BytesIO(xml), parser)
     except etree.XMLSyntaxError as e:
         print(e)
+
         return
+    # end_time = time.time()
+    # print(f"XMLParser {end_time - start_time} seconds.")
 
     root = tree.getroot()
-
-    literature = Literature()
 
     # To find the pmid (or pubmed id)
     pmid = article_id_find(root, "pmid")
     # print(pmid)
-    # Literature already been added as a reference.
-    # The task next is to update the info for the original reference.
-    if pmid is not None:
-        temp_literature_by_pmid = literature_query.filter_by(pmid=pmid).first()
-        if temp_literature_by_pmid is not None:
+
+    # start_time = time.time()
+    if pmid:
+        # start_time_temp_literature_by_pmid = time.time()
+        temp_literature_by_pmid = Literature.objects(pmid=pmid).first()
+        # end_time_temp_literature_by_pmid = time.time()
+        # f"if pmid {end_time_temp_literature_by_pmid - start_time_temp_literature_by_pmid} seconds."
+        if temp_literature_by_pmid:
             literature = temp_literature_by_pmid
         else:
-            pass
-    else:
-        literature.pmid = pmid
+            literature.pmid = pmid
+    # end_time = time.time()
+    # print(f"if pmid {end_time - start_time} seconds.")
 
     literature.pmc_uid = pmc_uid
-    literature.local_path = infile
+    literature.local_path = infile.replace(rootDir, "")
+    literature.save()
 
-    # To obtain the reference info
+    # start_time = time.time()
+    # To get the reference info
     target_tag = 'ref'
-    get_general_method(target_tag, infile, get_reference_with_pmid, literature)
+    get_general_method(target_tag, infile, get_reference, literature)
+    # end_time = time.time()
+    # print(f"get_reference {end_time - start_time} seconds.")
+
+    # start_time = time.time()
+    # To get the citation context
+    target_tag = 'p'
+    get_general_method(target_tag, infile, get_citation_contexts_for_each_pmc, literature)
+    # end_time = time.time()
+    # print(f"get_citation_contexts_for_each_pmc {end_time - start_time} seconds.")
+
+    literature.fully_updated = True
+    literature.save()
 
 
 def article_id_find(root, article_id_type):
@@ -212,16 +134,6 @@ def get_citation_contexts_for_each_pmc(context, *arguments):
     # print("Start!")
     citer = arguments[0]
 
-    session = Session()
-    cite_query = session.query(Cite)
-
-    bibr_xpath = etree.XPath(
-        ".//{0}xref[@ref-type='bibr']".format(
-            article_namespace
-        )
-    )
-    # print(bibr_xpath)
-
     bibr_xpath = etree.XPath(
         ".//{0}xref[@ref-type='bibr']".format(
             article_namespace
@@ -238,8 +150,9 @@ def get_citation_contexts_for_each_pmc(context, *arguments):
     )
 
     para_count = 0
-    for event, elem in context:
+    for event, elem in context:  # Iterate each paragraph.
 
+        # start_time = time.time()
         para_count = para_count + 1
         bibr_list = bibr_xpath(elem)
         if len(bibr_list) == 0:
@@ -282,7 +195,8 @@ def get_citation_contexts_for_each_pmc(context, *arguments):
                 former_bibr_tail_is_str = isinstance(former_bibr.tail, str)
                 if former_bibr_tail_is_str is True:
                     former_bibr.tail = html.unescape(former_bibr.tail)
-                    former_bibr_tail_match_is_not_none = re.search(r"~~\d+?~~\s*[–-]\s*$", former_bibr.tail) is not None
+                    former_bibr_tail_match_is_not_none = \
+                        re.search(r"~~\d+?~~\s*[–-]\s*$", former_bibr.tail) is not None
 
             if former_bibr_is_not_none and \
                     former_bibr_tail_is_str and \
@@ -293,7 +207,7 @@ def get_citation_contexts_for_each_pmc(context, *arguments):
                 end_rid = (bibr.attrib["rid"])
                 # print(end_rid)
 
-                end_cite = cite_query.filter_by(
+                end_cite = Cite.objects(
                     citer=citer, local_reference_id=end_rid
                 ).first()
 
@@ -338,7 +252,7 @@ def get_citation_contexts_for_each_pmc(context, *arguments):
             else:
                 for rid in rids:
                     # print(rid)
-                    cite = cite_query.filter_by(
+                    cite = Cite.objects(
                         citer=citer, local_reference_id=rid
                     ).first()
                     if cite is not None:
@@ -365,79 +279,83 @@ def get_citation_contexts_for_each_pmc(context, *arguments):
 
         del bibr_list
 
-        # the paragraph without outer tag
-        para_text = etree.tostring(elem, encoding="unicode")
-        para_text = re.sub(r"<.*?>", "", para_text)
-        # Replace the blank spaces with a single blank space
-        para_text = re.sub(r"\s+", " ", para_text)
-        para_text = re.sub(r'~~[;,\s]\s?~~', "~~~~", para_text)
-        para_text = html.unescape(para_text)
-        # eliminate the outer tag
-        # para_text = re.sub(r'<p.*?>|</p>\s*$', "", para_text)
-        para = nlp(para_text)
-        del para_text
+        process_para_text(elem, citer)
 
-        sentences = [sent.string.strip() for sent in para.sents]
-        print(sentences)
-        del para
-        # length_of_sentences = len(sentences)
+        # end_time = time.time()
+        # print(f"The {para_count} iterator costs {end_time - start_time} seconds.")
 
-        while len(sentences) > 0:
+    del context  # end for
+    # session.commit()
 
-            sent_str = sentences.pop(0)
-            if (len(sentences) is 0) and (sent_str is ""):
+
+def process_para_text(elem, citer):
+    # the paragraph without outer tag
+    para_text = etree.tostring(elem, encoding="unicode")
+    para_text = re.sub(r"\n", " ", para_text)
+    # delete the content between figure tag <fig>
+    para_text = re.sub(r"<fig.*</fig>", " ", para_text)
+    para_text = re.sub(r"<table-wrap.*</table-wrap>", " ", para_text)
+    para_text = re.sub(r"<table.*</table>", " ", para_text)
+    # delete the html tag
+    para_text = re.sub(r"<.*?>", " ", para_text)
+    # Replace the blank spaces with a single blank space
+    para_text = re.sub(r"\s+", " ", para_text)
+    # delete e.g. ~~, and ~~
+    para_text = re.sub(r'~~[;,\s]*(and)?[;,\s]*~~', "~~~~", para_text)
+    para_text = html.unescape(para_text)
+    # eliminate the outer tag
+    # para_text = re.sub(r'<p.*?>|</p>\s*$', "", para_text)
+    para = nlp(para_text)
+    del para_text
+
+    sentences = [sent.string.strip() for sent in para.sents]
+    # print(sentences)
+    del para
+    # length_of_sentences = len(sentences)
+
+    citance_texts = []
+    while len(sentences) > 0:
+
+        sent_str = sentences.pop(0)
+        if (len(sentences) is 0) and (sent_str is ""):
+            break
+        sent_str = sent_str.strip()
+
+        # The processing of next_sent
+        # Whether to be included in the current sentence
+        while 1 == 1:
+
+            if len(sentences) > 0:
+                next_sent = sentences.pop(0)
+            else:
                 break
-            sent_str = sent_str.strip()
+            next_sent = re.sub(r"\s+", " ", next_sent)
+            next_sent = next_sent.strip()
 
+            sent_starts_without_uppercase_or_num = re.match(
+                r'^[A-Z]|\d|\'|\"', next_sent
+            ) is None
+            sent_ends_with_citation_context_abbreviations = sent_str.endswith(
+                tuple(citation_context_abbreviations)
+            )
+            sent_ends_without_end_of_sentence_punctuation = not sent_str.endswith(
+                tuple(end_of_sentence_punctuation)
+            )
+            if sent_starts_without_uppercase_or_num or \
+                    sent_ends_with_citation_context_abbreviations or \
+                    sent_ends_without_end_of_sentence_punctuation:
+                sent_str = sent_str + " " + next_sent
+            else:
+                sentences.insert(0, next_sent)
+                break
+
+        sent_str = clean_sent_str(sent_str)
+        search_objs = re.findall(r"~~\d+?~~", sent_str)
+
+        citance_text = CitanceText()
+        citance_text.save()
+        if search_objs:
             # print(sent_str)
-            # print(next_sent)
-
-            # regExp = r'\s?~~\d+~~[;,\s]?\s?'
-            # matchObj = re.match(regExp, next_sent)
-            # while matchObj:
-            #     # print(matchObj.group())
-            #     sent_str = sent_str + " " + matchObj.group()
-            #     sent_str = sent_str.strip()
-            #     # print(sent_str)
-            #     next_sent = re.sub(regExp, " ", next_sent)
-            #     next_sent = re.sub(r"\s+", " ", next_sent)
-            #     next_sent = next_sent.strip()
-            #     # print(next_sent)
-            #     matchObj = re.match(regExp, next_sent)
-
-            while 1 is 1:
-
-                if len(sentences) > 0:
-                    next_sent = sentences.pop(0)
-                else:
-                    break
-                next_sent = re.sub(r"\s+", " ", next_sent)
-                next_sent = next_sent.strip()
-
-                sent_starts_without_uppercase_or_num = re.match(
-                    r'^[A-Z]|\d|\'|\"', next_sent
-                ) is None
-                sent_ends_with_citation_context_abbreviations = sent_str.endswith(
-                    tuple(citation_context_abbreviations)
-                )
-                sent_ends_without_end_of_sentence_punctuation = not sent_str.endswith(
-                    tuple(end_of_sentence_punctuation)
-                )
-                if sent_starts_without_uppercase_or_num or \
-                        sent_ends_with_citation_context_abbreviations or \
-                        sent_ends_without_end_of_sentence_punctuation:
-                    sent_str = sent_str + " " + next_sent
-                else:
-                    sentences.insert(0, next_sent)
-                    break
-
-            sent_str = re.sub(r'\s+', ' ', sent_str.strip())
-            sent_str = sent_str.strip()
-            # sent_str = html.unescape(sent_str)
-            print(sent_str)
-            citation_context_text = CitationContextText(text=sent_str)
-
-            search_objs = re.findall(r"~~\d+?~~", sent_str)
             # print(search_objs)
             reference_sequence_list = []
             for so in search_objs:
@@ -451,41 +369,49 @@ def get_citation_contexts_for_each_pmc(context, *arguments):
                     reference_sequence_list.append(reference_sequence)
 
                 # print(reference_sequence_list)
-                cite = cite_query.filter_by(
+                cite = Cite.objects(
                     citer=citer, reference_sequence=reference_sequence
                 ).first()
                 # print(cite)
                 # print(reference_sequence)
-                citation_context = CitationContext(
+                # The position for so
+                position = sent_str.find(so)
+                citance = Citance(
+                    position=position,
                     cite=cite,
-                    citationcontexttext=citation_context_text
+                    citation_context_text=citance_text
                 )
-                session.add(citation_context)
-
+                # session.add(citation_context)
+                citance.save()
                 # print("Hello!")
-
-                # # The position for so
-                # position = sent_str.find(so)
-                # citation_anchor_position = CitationAnchorPosition(
-                #     citationcontext_id=citation_context.id,
-                #     citationcontexttext_id=citation_context_text.id,
-                #     position=position
-                # )
-                # session.add(citation_anchor_position)
-                #
-                # sent_str = sent_str.replace(so, "")
+                sent_str = sent_str.replace(so, "")
 
             del search_objs
             del reference_sequence_list
 
-        elem.clear()
-        while elem.getprevious() is not None:
-            del elem.getparent()[0]
+        sent_str = clean_sent_str(sent_str)
+        citance_text.text = sent_str
+        citance_text.save()
 
-    # print("End!")
+        citance_texts.append(citance_text)
 
-    del context  # end for
-    # session.commit()
+    cite_paragraph_text = CiteParagraphText()
+    cite_paragraph_text.citance_texts = citance_texts
+    cite_paragraph_text.save()
+
+    elem.clear()
+    while elem.getprevious() is not None:
+        del elem.getparent()[0]
+
+
+def clean_sent_str(sent_str):
+    sent_str = re.sub(r'\[[\s|,|\d|;]*\]', ' ', sent_str.strip())
+    sent_str = re.sub(r'\([\s|,|\d|;]*\)', ' ', sent_str.strip())
+    sent_str = re.sub(r'\s+', ' ', sent_str.strip())
+    sent_str = sent_str.replace(" .", ".")
+    sent_str = sent_str.strip()
+
+    return sent_str
 
 
 # To get the references
@@ -494,10 +420,10 @@ def get_citation_contexts_for_each_pmc(context, *arguments):
 def get_reference(context, *arguments):
     # arguments = citer(literature)
     citer = arguments[0]
-    print(citer)
-    session = Session()
-    literature_query = session.query(Literature)
-    cite_query = session.query(Cite)
+    # print(citer)
+    # session = Session()
+    # literature_query = session.query(Literature)
+    # cite_query = session.query(Cite)
 
     # To find the ref-id, e.g. B1, B2
     ref_id_xpath = etree.XPath(
@@ -508,25 +434,6 @@ def get_reference(context, *arguments):
             article_namespace
         )
     )
-
-    '''
-    publication_type_xpath = etree.XPath(
-        "@publication-type".format(article_namespace)
-    )
-    article_title_xpath = etree.XPath(
-        ".//{0}article-title".format(article_namespace)
-    )
-    source_title_xpath = etree.XPath(
-        ".//{0}source".format(article_namespace
-                              )
-    )
-    year_xpath = etree.XPath(
-        ".//{0}year".format(article_namespace)
-    )
-    volume_xpath = etree.XPath(
-        ".//{0}volume".format(article_namespace)
-    )
-    '''
 
     reference_sequence = 0
     for event, elem in context:
@@ -535,82 +442,32 @@ def get_reference(context, *arguments):
 
         # print(citer)
         # print(reference_sequence)
-        temp_cite = cite_query.filter_by(citer=citer, reference_sequence=reference_sequence).first()
+        # start_time = time.time()
+        temp_cite = Cite.objects(citer=citer, reference_sequence=reference_sequence).first()
+
         # if temp_cite exists, then the program will continue
         if temp_cite:
             continue
 
-
-
-        '''
-        publication_type_list = publication_type_xpath(elem)
-        if len(publication_type_list) is not 0:
-            publication_type = publication_type_list[0]
-            reference.type = publication_type
-
-        article_titles = article_title_xpath(elem)
-        if article_titles:
-            article_title = article_titles[0]
-            if article_title.text is not None:
-                article_title_text = article_title.text
-            else:
-                article_title_text = ""
-
-            for a_t in article_title:
-                if a_t.text is None:
-                    a_t.text = ""
-                if a_t.tail is None:
-                    a_t.tail = ""
-                article_title_text = article_title_text + " " + a_t.text + " " + a_t.tail
-
-            article_title_text = article_title_text.strip()
-            article_title_text = re.sub(r"\s+", " ", article_title_text)
-            reference.title = article_title_text
-        # print(article_title)
-
-        source_titles = source_title_xpath(elem)
-        if source_titles:
-            source_title = source_titles[0].text
-            if source_title is None:
-                source_title = ""
-            source_title = source_title.strip()
-            source_title = re.sub(r"\s+", " ", source_title)
-            reference.source_title = source_title
-        # print(source_title)
-
-        years = year_xpath(elem)
-        if years:
-            year = years[0].text
-            reference.pub_year = year[0:4]
-        # print(year)
-
-        volumes = volume_xpath(elem)
-        if volumes:
-            volume = volumes[0].text
-            reference.volume = volume
-        # print(volume)
-        '''
-
-        ref_id = ""
+        ref_id = None
         ref_id_list = ref_id_xpath(elem)
         if ref_id_list:
             ref_id = ref_id_list[0]
-        '''
-        else:
-            # print("ref_id_list is None, ref_id is 0, which is ridiculous.")
-            continue
-        '''
-        pmid = ""
+
+        pmid = None
         pmid_list = pmid_xpath(elem)
         if pmid_list:
             pmid = pmid_list[0].text
 
         reference = Literature()
-        temp_reference = literature_query.filter_by(pmid=pmid).first()
-        if temp_reference:
-            reference = temp_reference
-        else:
-            reference.pmid = pmid
+        if pmid:
+            temp_reference = Literature.objects(pmid=pmid).first()
+            if temp_reference:
+                reference = temp_reference
+            else:
+                reference.pmid = pmid
+
+        reference.save()
 
         cite = Cite(
             citer=citer,
@@ -618,148 +475,15 @@ def get_reference(context, *arguments):
             local_reference_id=ref_id,
             reference_sequence=reference_sequence
         )
-        session.add(cite)
-        '''
-        else:
-            # Discard those references without pmid
-            continue
-        '''
-
+        # session.add(cite)
+        cite.save()
+        
         elem.clear()
         while elem.getprevious() is not None:
             del elem.getparent()[0]
 
-    del context
-    session.commit()
-
-
-# To get the references with pmid
-def get_reference_with_pmid(context, *arguments):
-    # arguments = citer(literature)
-    citer = arguments[0]
-
-    session = Session()
-    literature_query = session.query(Literature)
-
-    # To find the ref-id, e.g. B1, B2
-    ref_id_xpath = etree.XPath(
-        "@id".format(article_namespace)
-    )
-    pmid_xpath = etree.XPath(
-        ".//{0}pub-id[@pub-id-type='pmid']".format(
-            article_namespace
-        )
-    )
-
-    '''
-    publication_type_xpath = etree.XPath(
-        "@publication-type".format(article_namespace)
-    )
-    article_title_xpath = etree.XPath(
-        ".//{0}article-title".format(article_namespace)
-    )
-    source_title_xpath = etree.XPath(
-        ".//{0}source".format(article_namespace
-                              )
-    )
-    year_xpath = etree.XPath(
-        ".//{0}year".format(article_namespace)
-    )
-    volume_xpath = etree.XPath(
-        ".//{0}volume".format(article_namespace)
-    )
-    '''
-
-    reference_sequence = 0
-    for event, elem in context:
-
-        reference_sequence += 1
-        reference = Literature()
-
-        '''
-        publication_type_list = publication_type_xpath(elem)
-        if len(publication_type_list) is not 0:
-            publication_type = publication_type_list[0]
-            reference.type = publication_type
-
-        article_titles = article_title_xpath(elem)
-        if article_titles:
-            article_title = article_titles[0]
-            if article_title.text is not None:
-                article_title_text = article_title.text
-            else:
-                article_title_text = ""
-
-            for a_t in article_title:
-                if a_t.text is None:
-                    a_t.text = ""
-                if a_t.tail is None:
-                    a_t.tail = ""
-                article_title_text = article_title_text + " " + a_t.text + " " + a_t.tail
-
-            article_title_text = article_title_text.strip()
-            article_title_text = re.sub(r"\s+", " ", article_title_text)
-            reference.title = article_title_text
-        # print(article_title)
-
-        source_titles = source_title_xpath(elem)
-        if source_titles:
-            source_title = source_titles[0].text
-            if source_title is None:
-                source_title = ""
-            source_title = source_title.strip()
-            source_title = re.sub(r"\s+", " ", source_title)
-            reference.source_title = source_title
-        # print(source_title)
-
-        years = year_xpath(elem)
-        if years:
-            year = years[0].text
-            reference.pub_year = year[0:4]
-        # print(year)
-
-        volumes = volume_xpath(elem)
-        if volumes:
-            volume = volumes[0].text
-            reference.volume = volume
-        # print(volume)
-        '''
-
-        ref_id = ""
-        ref_id_list = ref_id_xpath(elem)
-        if len(ref_id_list) is not 0:
-            ref_id = ref_id_list[0]
-        '''
-        else:
-            # print("ref_id_list is None, ref_id is 0, which is ridiculous.")
-            continue
-        '''
-
-        pmid_list = pmid_xpath(elem)
-        if len(pmid_list) is not 0:
-            pmid = pmid_list[0].text
-            temp_reference = literature_query.filter_by(pmid=pmid).first()
-            if temp_reference is not None:
-                reference = temp_reference
-            else:
-                reference.pmid = pmid
-
-            cite = Cite(
-                citer=citer,
-                cited=reference,
-                local_reference_id=ref_id,
-                reference_sequence=reference_sequence
-            )
-            session.add(cite)
-        '''
-        else:
-            # Discard those references without pmid
-            continue
-        '''
-
-        elem.clear()
-        while elem.getprevious() is not None:
-            del elem.getparent()[0]
+        # end_time = time.time()
+        # print(f"The {reference_sequence} iterator costs {end_time-start_time} seconds.")
 
     del context
-    session.commit()
+    # session.commit()
