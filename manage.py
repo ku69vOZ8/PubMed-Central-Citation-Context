@@ -10,6 +10,7 @@ nlp = en_core_web_md.load()
 rootDir = 'D:\\articles'
 rootDir = '\\Volumes\\Toshiba\\pmc 20191208\\oa_bulk'
 rootDir = 'D:\\articles'
+rootDir = 'F:\\pmc 20191208\\oa_bulk'
 
 
 def build_citation_context_database(rootDir):
