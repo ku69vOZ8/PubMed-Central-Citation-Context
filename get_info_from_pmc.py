@@ -112,8 +112,8 @@ def build_citation_index_for_each_pmc(infile):
     # end_time = time.time()
     # print(f"get_citation_contexts_for_each_pmc {end_time - start_time} seconds.")
 
-    # literature.fully_updated = True
-    # literature.save()
+    literature.fully_updated = True
+    literature.save()
 
 
 def article_id_find(root, article_id_type):
