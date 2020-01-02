@@ -11,10 +11,10 @@ rootDir = 'D:\\articles'
 rootDir = '\\Volumes\\Toshiba\\pmc 20191208\\oa_bulk'
 rootDir = 'D:\\articles'
 rootDir = 'F:\\pmc 20191208\\oa_bulk'
+rootDir = 'D:\\test\\test'
 
 
 def build_citation_context_database(rootDir):
-
     print("Running...")
     count = 0
     for dirName, subdirList, fileList in os.walk(rootDir):
@@ -35,29 +35,29 @@ def build_citation_context_database(rootDir):
                 # end_time = time.time()
                 # print(f"build_citation_index_for_each_pmc {end_time - start_time} seconds.")
 
-# To do process the path name /articles and  /oa_bulk
-# upper_path = "/articles"
-# upper_path = "/oa_bulk"
 
-# def process_dir():
-#     from models import Literature
-#     '''
-#     Before, the dir contains the root path,
-#     with this method, we are going delete the root path.
-#     :return:
-#     '''
-#     count = 0
-#     for literature in Literature.objects:
-#         # print(l.local_path)
-#         if literature.local_path:
-#             literature.local_path = literature.local_path.replace(rootDir, "")
-#             print(literature.local_path)
-#             literature.save()
-#             count += 1
-#             print(count)
-#
-#     pass
+def process_dir():
+    # To do process the path name /articles and  /oa_bulk
+    # upper_path = "/articles"
+    # upper_path = "/oa_bulk"
+    from models import Literature
+
+    count = 0
+    for literature in Literature.objects:
+        # print(l.local_path)
+        if literature.local_path:
+            literature.local_path = literature.local_path.replace("articles", "")
+            print(literature.local_path)
+            literature.save()
+            count += 1
+            print(count)
+
+    pass
 
 
 if __name__ == '__main__':
     build_citation_context_database(rootDir)
+
+    # process_dir()
+
+    pass

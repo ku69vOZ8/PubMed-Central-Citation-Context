@@ -22,8 +22,13 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 article_namespace = ""
 nlp = en_core_web_md.load()
 
-citation_context_abbreviations = ['cf.', 'e.g.', 'i.e.', 'etc.', 'viz.', 'vs.', 'et al.', \
-                                  'p.', 'pp.', 'Fig.', 'No.']
+# 'etc.' can be at the end of Sentence
+citation_context_abbreviations = ['cf.', 'e.g.', 'i.e.', 'viz.',
+                                  'vs.', 'et al.', 's.v.', 'v.', 'vs.',
+                                  'p.', 'pp.', 'Fig.', 'No.',
+                                  'ca.', 'N.B.', 'q.v.', 'sc.',
+                                  'c.', 'et seq.', 'ibid.', 'id.',
+                                  'op. cit.', 'loc. cit.']
 end_of_sentence_punctuation = ['.', '?', "!", "~~"]
 
 
@@ -103,8 +108,8 @@ def build_citation_index_for_each_pmc(infile):
     # end_time = time.time()
     # print(f"get_citation_contexts_for_each_pmc {end_time - start_time} seconds.")
 
-    literature.fully_updated = True
-    literature.save()
+    # literature.fully_updated = True
+    # literature.save()
 
 
 def article_id_find(root, article_id_type):
@@ -145,10 +150,6 @@ def get_citation_contexts_for_each_pmc(context, *arguments):
         )
     )
 
-    child_node_xpath = etree.XPath(
-        "{0}child::*".format(article_namespace)
-    )
-
     para_count = 0
     for event, elem in context:  # Iterate each paragraph.
 
@@ -164,120 +165,7 @@ def get_citation_contexts_for_each_pmc(context, *arguments):
         # print(para_count)
         # print(len(bibr_list))
 
-        former_bibr = None
-        former_bibr_seq = 0
-        for bibr in bibr_list:
-
-            # print("Bibr!")
-
-            bibr_text = bibr.text
-            # print(bibr_text)
-            if bibr_text is None:
-                bibr_text = ""
-
-            # print(bibr.attrib["rid"])
-            bibr.text = ""
-
-            child_nodes = child_node_xpath(bibr)
-
-            for cn in child_nodes:
-                if (cn is None) or (cn.text is None):
-                    cn.text = ""
-                bibr_text = bibr_text + cn.text
-                cn.text = ""
-
-            # This is the block to solve problems like "2<bibr='CR2'>-5<bibr='CR5'>"
-            former_bibr_is_not_none = former_bibr is not None
-            former_bibr_tail_is_str = False
-            former_bibr_tail_match_is_not_none = False
-
-            if former_bibr_is_not_none is True:
-                former_bibr_tail_is_str = isinstance(former_bibr.tail, str)
-                if former_bibr_tail_is_str is True:
-                    former_bibr.tail = html.unescape(former_bibr.tail)
-                    former_bibr_tail_match_is_not_none = \
-                        re.search(r"~~\d+?~~\s*[–-]\s*$", former_bibr.tail) is not None
-
-            if former_bibr_is_not_none and \
-                    former_bibr_tail_is_str and \
-                    former_bibr_tail_match_is_not_none:
-
-                former_bibr.tail = re.sub(r"[–-]", "", former_bibr.tail)
-                former_bibr.tail = re.sub(r"\s+", " ", former_bibr.tail)
-                end_rid = (bibr.attrib["rid"])
-                # print(end_rid)
-
-                end_cite = Cite.objects(
-                    citer=citer, local_reference_id=end_rid
-                ).first()
-
-                start_rid_sequence = int(former_bibr_seq)
-                end_cite_sequence = 0
-                if end_cite:
-                    end_cite_sequence = end_cite.reference_sequence
-                else:
-                    # print("Can't find endcite, that must be wrong.") ADD:?
-                    # Note: Since only the references with pmid are collected,
-                    # which means the cites table doesn't cover some records,
-                    # so this might NOT be wrong.
-                    continue
-
-                for count in range(start_rid_sequence + 1, end_cite_sequence + 1):
-                    former_bibr.tail = former_bibr.tail + ",~~" + str(count) + "~~"
-                # former_bibr.tail = former_bibr.tail
-
-                former_bibr = bibr
-                continue
-
-            seqs_str = []
-
-            bibr_text = html.unescape(bibr_text)
-            # Replace the blank spaces
-            bibr_text = re.sub(r"\s+", " ", bibr_text)
-            # This is the block to solve problems like "2<bibr='CR2'>-5<bibr='CR5'>"
-            # For example, "2<bibr='CR2'>-4" or "2<bibr='CR2'>–4"
-            # It can be compared with similar problem above
-            searchObj = re.search(r'(\d+)\s*[–-]\s*(\d+)', bibr_text)
-            rids = re.split(r'[;,\s]\s*', bibr.attrib["rid"])
-            # print(rids)
-            if searchObj:
-                # print("searchObj.group() : ", searchObj.group())
-                # print("searchObj.group(1) : ", searchObj.group(1))
-                # print("searchObj.group(1) : ", searchObj.group(2))
-                start = int(searchObj.group(1))
-                end = int(searchObj.group(2))
-                seqs_str = [str(i) for i in range(start, end + 1)]
-                bibr_text = re.sub(r"[–-]", "", bibr_text)
-                bibr_text = re.sub(r"\s+", " ", bibr_text)
-            else:
-                for rid in rids:
-                    # print(rid)
-                    cite = Cite.objects(
-                        citer=citer, local_reference_id=rid
-                    ).first()
-                    if cite is not None:
-                        seq_str = str(cite.reference_sequence)
-                        seqs_str.append(seq_str)
-
-            if len(seqs_str) == 0:
-                # print("len(seqs) is 0, that must be wrong.") ADD:?
-                # Note: Since only the references with pmid are collected,
-                # which means the cites table doesn't cover some records,
-                # so this might NOT be wrong.
-                # print(bibr_text)
-                # # print(citer.pmc_uid)
-                continue
-
-            if bibr.tail is None:
-                bibr.tail = ""
-
-            seqs_text = "~~{0}~~".format("~~~~".join(seqs_str))
-            bibr.tail = seqs_text + bibr.tail
-
-            former_bibr = bibr
-            former_bibr_seq = seqs_str[-1]
-
-        del bibr_list
+        tag_citation_anchor(bibr_list, citer)
 
         process_para_text(elem, citer)
 
@@ -288,9 +176,130 @@ def get_citation_contexts_for_each_pmc(context, *arguments):
     # session.commit()
 
 
-def process_para_text(elem, citer):
-    # the paragraph without outer tag
-    para_text = etree.tostring(elem, encoding="unicode")
+def tag_citation_anchor(bibr_list, citer):
+    child_node_xpath = etree.XPath(
+        "{0}child::*".format(article_namespace)
+    )
+
+    former_bibr = None
+    former_bibr_seq = 0
+
+    for bibr in bibr_list:
+
+        # print("Bibr!")
+
+        bibr_text = bibr.text
+        # print(bibr_text)
+        if bibr_text is None:
+            bibr_text = ""
+
+        # print(bibr.attrib["rid"])
+        bibr.text = ""
+
+        child_nodes = child_node_xpath(bibr)
+
+        for cn in child_nodes:
+            if (cn is None) or (cn.text is None):
+                cn.text = ""
+            bibr_text = bibr_text + cn.text
+            cn.text = ""
+
+        # This is the block to solve problems like "2<bibr='CR2'>-5<bibr='CR5'>"
+        former_bibr_is_not_none = former_bibr is not None
+        former_bibr_tail_is_str = False
+        former_bibr_tail_match_is_not_none = False
+
+        if former_bibr_is_not_none is True:
+            former_bibr_tail_is_str = isinstance(former_bibr.tail, str)
+            if former_bibr_tail_is_str is True:
+                former_bibr.tail = html.unescape(former_bibr.tail)
+                former_bibr_tail_match_is_not_none = \
+                    re.search(r"~~\d+?~~\s*[–-]\s*$", former_bibr.tail) is not None
+
+        if former_bibr_is_not_none and \
+                former_bibr_tail_is_str and \
+                former_bibr_tail_match_is_not_none:
+
+            former_bibr.tail = re.sub(r"[–-]", "", former_bibr.tail)
+            former_bibr.tail = re.sub(r"\s+", " ", former_bibr.tail)
+            end_rid = (bibr.attrib["rid"])
+            # print(end_rid)
+
+            end_cite = Cite.objects(
+                citer=citer, local_reference_id=end_rid
+            ).first()
+
+            start_rid_sequence = int(former_bibr_seq)
+            end_cite_sequence = 0
+            if end_cite:
+                end_cite_sequence = end_cite.reference_sequence
+            else:
+                # print("Can't find endcite, that must be wrong.") ADD:?
+                # Note: Since only the references with pmid are collected,
+                # which means the cites table doesn't cover some records,
+                # so this might NOT be wrong.
+                continue
+
+            for count in range(start_rid_sequence + 1, end_cite_sequence + 1):
+                former_bibr.tail = former_bibr.tail + ",~~" + str(count) + "~~"
+            # former_bibr.tail = former_bibr.tail
+
+            former_bibr = bibr
+            continue
+
+        seqs_str = []
+
+        bibr_text = html.unescape(bibr_text)
+        # Replace the blank spaces
+        bibr_text = re.sub(r"\s+", " ", bibr_text)
+        # This is the block to solve problems like "2<bibr='CR2'>-5<bibr='CR5'>"
+        # For example, "2<bibr='CR2'>-4" or "2<bibr='CR2'>–4"
+        # It can be compared with similar problem above
+        searchObj = re.search(r'(\d+)\s*[–-]\s*(\d+)', bibr_text)
+        rids = re.split(r'[;,\s]\s*', bibr.attrib["rid"])
+        # print(rids)
+        if searchObj:
+            # print("searchObj.group() : ", searchObj.group())
+            # print("searchObj.group(1) : ", searchObj.group(1))
+            # print("searchObj.group(1) : ", searchObj.group(2))
+            start = int(searchObj.group(1))
+            end = int(searchObj.group(2))
+            seqs_str = [str(i) for i in range(start, end + 1)]
+            bibr_text = re.sub(r"[–-]", "", bibr_text)
+            bibr_text = re.sub(r"\s+", " ", bibr_text)
+        else:
+            for rid in rids:
+                # print(rid)
+                cite = Cite.objects(
+                    citer=citer, local_reference_id=rid
+                ).first()
+
+                if cite is not None:
+                    seq_str = str(cite.reference_sequence)
+                    seqs_str.append(seq_str)
+
+        if len(seqs_str) == 0:
+            # print("len(seqs) is 0, that must be wrong.") ADD:?
+            # Note: Since only the references with pmid are collected,
+            # which means the cites table doesn't cover some records,
+            # so this might NOT be wrong.
+            # print(bibr_text)
+            # # print(citer.pmc_uid)
+            continue
+
+        if bibr.tail is None:
+            bibr.tail = ""
+
+        seqs_text = "~~{0}~~".format("~~~~".join(seqs_str))
+        bibr.tail = seqs_text + bibr.tail
+
+        former_bibr = bibr
+        former_bibr_seq = seqs_str[-1]
+
+    del bibr_list
+
+
+def clean_para_text(para_text):
     para_text = re.sub(r"\n", " ", para_text)
     # delete the content between figure tag <fig>
     para_text = re.sub(r"<fig.*</fig>", " ", para_text)
@@ -302,9 +311,34 @@ def process_para_text(elem, citer):
     para_text = re.sub(r"\s+", " ", para_text)
     # delete e.g. ~~, and ~~
     para_text = re.sub(r'~~[;,\s]*(and)?[;,\s]*~~', "~~~~", para_text)
+    para_text = re.sub(r'\s?[\[(]?\s?~~', '~~', para_text)
+    para_text = re.sub(r'~~\s?[\])]?\s?', '~~', para_text)
+    para_text = para_text.replace(" .", ".")
     para_text = html.unescape(para_text)
-    # eliminate the outer tag
-    # para_text = re.sub(r'<p.*?>|</p>\s*$', "", para_text)
+
+    return para_text
+
+
+def process_para_text(elem, citer):
+    # the paragraph without outer tag
+    para_text = etree.tostring(elem, encoding="unicode")
+
+    para_text = clean_para_text(para_text)
+
+    search_objs = re.findall(r"~~\d+?~~", para_text)
+
+    if not search_objs:
+        return
+
+    position_sequence_dict = []
+    for so in search_objs:
+
+        # The position for so
+        position = para_text.find(so)
+        para_text = para_text.replace(so, "")
+
+
+
     para = nlp(para_text)
     del para_text
 
@@ -329,7 +363,6 @@ def process_para_text(elem, citer):
                 next_sent = sentences.pop(0)
             else:
                 break
-            next_sent = re.sub(r"\s+", " ", next_sent)
             next_sent = next_sent.strip()
 
             sent_starts_without_uppercase_or_num = re.match(
@@ -349,7 +382,7 @@ def process_para_text(elem, citer):
                 sentences.insert(0, next_sent)
                 break
 
-        sent_str = clean_sent_str(sent_str)
+        # sent_str = clean_sent_str(sent_str)
         search_objs = re.findall(r"~~\d+?~~", sent_str)
 
         citance_text = CitanceText()
@@ -389,7 +422,7 @@ def process_para_text(elem, citer):
             del search_objs
             del reference_sequence_list
 
-        sent_str = clean_sent_str(sent_str)
+        # sent_str = clean_sent_str(sent_str)
         citance_text.text = sent_str
         citance_text.save()
 
@@ -477,7 +510,7 @@ def get_reference(context, *arguments):
         )
         # session.add(cite)
         cite.save()
-        
+
         elem.clear()
         while elem.getprevious() is not None:
             del elem.getparent()[0]
