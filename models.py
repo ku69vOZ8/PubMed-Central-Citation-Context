@@ -7,7 +7,7 @@ from mongoengine import ReferenceField
 from mongoengine import IntField
 from mongoengine import ListField
 
-connect('pmc_citation_context')
+connect('pubmed_central_citation_context')
 
 
 class Literature(Document):
