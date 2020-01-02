@@ -53,12 +53,12 @@ class CitationContextText(Document):
     }
 
 
-class CitanceText(CitationContextText):
-    pass
+#
+# class CitanceText(CitationContextText):
+#     pass
 
 
-class CiteParagraphText(Document):
-    citance_texts = ListField(ReferenceField("CitanceText"))
+class CiteParagraphText(CitationContextText):
     pass
 
 
@@ -75,6 +75,9 @@ class CitationContext(Document):
     }
 
 
-class Citance(CitationContext):
+class CiteParagraph(CitationContext):
     pass
 
+#
+# class Citance(CitationContext):
+#     pass

@@ -3,13 +3,15 @@ from lxml import etree
 import re
 import os
 import html
-import en_core_web_md
+# import en_core_web_md
 
 from models import Literature
 from models import Cite
-from models import Citance
-from models import CitanceText
+from models import CiteParagraph
 from models import CiteParagraphText
+# from models import Citance
+# from models import CitanceText
+
 import manage
 
 rootDir = manage.rootDir
@@ -18,18 +20,20 @@ rootDir = manage.rootDir
 # from models import CiteMeme
 # import pandas as pd
 
-basedir = os.path.abspath(os.path.dirname(__file__))
+# basedir = os.path.abspath(os.path.dirname(__file__))
 article_namespace = ""
-nlp = en_core_web_md.load()
+
+
+# nlp = en_core_web_md.load()
 
 # 'etc.' can be at the end of Sentence
-citation_context_abbreviations = ['cf.', 'e.g.', 'i.e.', 'viz.',
-                                  'vs.', 'et al.', 's.v.', 'v.', 'vs.',
-                                  'p.', 'pp.', 'Fig.', 'No.',
-                                  'ca.', 'N.B.', 'q.v.', 'sc.',
-                                  'c.', 'et seq.', 'ibid.', 'id.',
-                                  'op. cit.', 'loc. cit.']
-end_of_sentence_punctuation = ['.', '?', "!", "~~"]
+# citation_context_abbreviations = ['cf.', 'e.g.', 'i.e.', 'viz.',
+#                                   'vs.', 'et al.', 's.v.', 'v.', 'vs.',
+#                                   'p.', 'pp.', 'Fig.', 'No.',
+#                                   'ca.', 'N.B.', 'q.v.', 'sc.',
+#                                   'c.', 'et seq.', 'ibid.', 'id.',
+#                                   'op. cit.', 'loc. cit.']
+# end_of_sentence_punctuation = ['.', '?', "!", "~~"]
 
 
 def build_citation_index_for_each_pmc(infile):
@@ -312,8 +316,8 @@ def clean_para_text(para_text):
     # delete e.g. ~~, and ~~
     para_text = re.sub(r'~~[;,\s]*(and)?[;,\s]*~~', "~~~~", para_text)
     para_text = re.sub(r'\s?[\[(]?\s?~~', '~~', para_text)
-    para_text = re.sub(r'~~\s?[\])]?\s?', '~~', para_text)
-    para_text = para_text.replace(" .", ".")
+    para_text = re.sub(r'~~\s?[\])]?', '~~', para_text)
+    # para_text = para_text.replace(" .", ".")
     para_text = html.unescape(para_text)
 
     return para_text
@@ -322,115 +326,130 @@ def clean_para_text(para_text):
 def process_para_text(elem, citer):
     # the paragraph without outer tag
     para_text = etree.tostring(elem, encoding="unicode")
-
     para_text = clean_para_text(para_text)
+    # print(para_text)
 
     search_objs = re.findall(r"~~\d+?~~", para_text)
-
     if not search_objs:
         return
 
-    position_sequence_dict = []
+    temp_text = text = re.sub(r"~~\d+?~~", "", para_text)
+    cite_paragraph_text = CiteParagraphText(
+        text=temp_text
+    )
+    cite_paragraph_text.save()
+
     for so in search_objs:
+        reference_sequence = int(so.strip("~~"))
+        cite = Cite.objects(
+            citer=citer, reference_sequence=reference_sequence
+        ).first()
 
         # The position for so
         position = para_text.find(so)
-        para_text = para_text.replace(so, "")
+        # print(temp_text[0:position])
 
+        cite_paragraph = CiteParagraph(
+            position=position,
+            cite=cite,
+            citation_context_text=cite_paragraph_text
+        )
+        cite_paragraph.save()
 
+        para_text = para_text.replace(so, "", 1)
 
-    para = nlp(para_text)
-    del para_text
-
-    sentences = [sent.string.strip() for sent in para.sents]
-    # print(sentences)
-    del para
-    # length_of_sentences = len(sentences)
-
-    citance_texts = []
-    while len(sentences) > 0:
-
-        sent_str = sentences.pop(0)
-        if (len(sentences) is 0) and (sent_str is ""):
-            break
-        sent_str = sent_str.strip()
-
-        # The processing of next_sent
-        # Whether to be included in the current sentence
-        while 1 == 1:
-
-            if len(sentences) > 0:
-                next_sent = sentences.pop(0)
-            else:
-                break
-            next_sent = next_sent.strip()
-
-            sent_starts_without_uppercase_or_num = re.match(
-                r'^[A-Z]|\d|\'|\"', next_sent
-            ) is None
-            sent_ends_with_citation_context_abbreviations = sent_str.endswith(
-                tuple(citation_context_abbreviations)
-            )
-            sent_ends_without_end_of_sentence_punctuation = not sent_str.endswith(
-                tuple(end_of_sentence_punctuation)
-            )
-            if sent_starts_without_uppercase_or_num or \
-                    sent_ends_with_citation_context_abbreviations or \
-                    sent_ends_without_end_of_sentence_punctuation:
-                sent_str = sent_str + " " + next_sent
-            else:
-                sentences.insert(0, next_sent)
-                break
-
-        # sent_str = clean_sent_str(sent_str)
-        search_objs = re.findall(r"~~\d+?~~", sent_str)
-
-        citance_text = CitanceText()
-        citance_text.save()
-        if search_objs:
-            # print(sent_str)
-            # print(search_objs)
-            reference_sequence_list = []
-            for so in search_objs:
-                # print(so.strip("~~"))
-                # sent_str = re.sub(r"~~.*?~~", "", sent_str)
-
-                reference_sequence = int(so.strip("~~"))
-                if reference_sequence in reference_sequence_list:
-                    continue
-                else:
-                    reference_sequence_list.append(reference_sequence)
-
-                # print(reference_sequence_list)
-                cite = Cite.objects(
-                    citer=citer, reference_sequence=reference_sequence
-                ).first()
-                # print(cite)
-                # print(reference_sequence)
-                # The position for so
-                position = sent_str.find(so)
-                citance = Citance(
-                    position=position,
-                    cite=cite,
-                    citation_context_text=citance_text
-                )
-                # session.add(citation_context)
-                citance.save()
-                # print("Hello!")
-                sent_str = sent_str.replace(so, "")
-
-            del search_objs
-            del reference_sequence_list
-
-        # sent_str = clean_sent_str(sent_str)
-        citance_text.text = sent_str
-        citance_text.save()
-
-        citance_texts.append(citance_text)
-
-    cite_paragraph_text = CiteParagraphText()
-    cite_paragraph_text.citance_texts = citance_texts
-    cite_paragraph_text.save()
+    # para = nlp(para_text)
+    # del para_text
+    #
+    # sentences = [sent.string.strip() for sent in para.sents]
+    # # print(sentences)
+    # del para
+    # # length_of_sentences = len(sentences)
+    #
+    # citance_texts = []
+    # while len(sentences) > 0:
+    #
+    #     sent_str = sentences.pop(0)
+    #     if (len(sentences) is 0) and (sent_str is ""):
+    #         break
+    #     sent_str = sent_str.strip()
+    #
+    #     # The processing of next_sent
+    #     # Whether to be included in the current sentence
+    #     while 1 == 1:
+    #
+    #         if len(sentences) > 0:
+    #             next_sent = sentences.pop(0)
+    #         else:
+    #             break
+    #         next_sent = next_sent.strip()
+    #
+    #         sent_starts_without_uppercase_or_num = re.match(
+    #             r'^[A-Z]|\d|\'|\"', next_sent
+    #         ) is None
+    #         sent_ends_with_citation_context_abbreviations = sent_str.endswith(
+    #             tuple(citation_context_abbreviations)
+    #         )
+    #         sent_ends_without_end_of_sentence_punctuation = not sent_str.endswith(
+    #             tuple(end_of_sentence_punctuation)
+    #         )
+    #         if sent_starts_without_uppercase_or_num or \
+    #                 sent_ends_with_citation_context_abbreviations or \
+    #                 sent_ends_without_end_of_sentence_punctuation:
+    #             sent_str = sent_str + " " + next_sent
+    #         else:
+    #             sentences.insert(0, next_sent)
+    #             break
+    #
+    #     # sent_str = clean_sent_str(sent_str)
+    #     search_objs = re.findall(r"~~\d+?~~", sent_str)
+    #
+    #     citance_text = CitanceText()
+    #     citance_text.save()
+    #     if search_objs:
+    #         # print(sent_str)
+    #         # print(search_objs)
+    #         reference_sequence_list = []
+    #         for so in search_objs:
+    #             # print(so.strip("~~"))
+    #             # sent_str = re.sub(r"~~.*?~~", "", sent_str)
+    #
+    #             reference_sequence = int(so.strip("~~"))
+    #             if reference_sequence in reference_sequence_list:
+    #                 continue
+    #             else:
+    #                 reference_sequence_list.append(reference_sequence)
+    #
+    #             # print(reference_sequence_list)
+    #             cite = Cite.objects(
+    #                 citer=citer, reference_sequence=reference_sequence
+    #             ).first()
+    #             # print(cite)
+    #             # print(reference_sequence)
+    #             # The position for so
+    #             position = sent_str.find(so)
+    #             citance = Citance(
+    #                 position=position,
+    #                 cite=cite,
+    #                 citation_context_text=citance_text
+    #             )
+    #             # session.add(citation_context)
+    #             citance.save()
+    #             # print("Hello!")
+    #             sent_str = sent_str.replace(so, "")
+    #
+    #         del search_objs
+    #         del reference_sequence_list
+    #
+    #     # sent_str = clean_sent_str(sent_str)
+    #     citance_text.text = sent_str
+    #     citance_text.save()
+    #
+    #     citance_texts.append(citance_text)
+    #
+    # cite_paragraph_text = CiteParagraphText()
+    # cite_paragraph_text.citance_texts = citance_texts
+    # cite_paragraph_text.save()
 
     elem.clear()
     while elem.getprevious() is not None:
