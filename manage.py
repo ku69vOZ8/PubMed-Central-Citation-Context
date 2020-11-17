@@ -1,17 +1,33 @@
 import get_info_from_pmc
 import os
 import re
-import en_core_web_md
+# import en_core_web_md
 
 # import time
 
-nlp = en_core_web_md.load()
+# nlp = en_core_web_md.load()
 
 rootDir = 'D:\\articles'
 rootDir = '\\Volumes\\Toshiba\\pmc 20191208\\oa_bulk'
 rootDir = 'D:\\articles'
 rootDir = 'F:\\pmc 20191208\\oa_bulk'
-rootDir = 'D:\\test\\test'
+rootDir = 'E:\\pmc 20191208\\oa_bulk'
+# rootDir = 'D:\\test\\test'
+
+def test_count(rootDir):
+    print("Running...")
+
+    count = 0
+    for dirName, subdirList, fileList in os.walk(rootDir):
+
+        infiles = []
+        for fname in fileList:
+
+            fname_is_PMC = re.match("^PMC\d{4,}\.n?xml$", fname) is not None
+            if fname_is_PMC:
+                count = count + 1
+                # print(fname)
+                print(count)
 
 
 def build_citation_context_database(rootDir):
@@ -59,5 +75,7 @@ if __name__ == '__main__':
     build_citation_context_database(rootDir)
 
     # process_dir()
+
+    # test_count(rootDir)
 
     pass

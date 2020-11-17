@@ -333,7 +333,7 @@ def process_para_text(elem, citer):
     if not search_objs:
         return
 
-    temp_text = text = re.sub(r"~~\d+?~~", "", para_text)
+    temp_text = re.sub(r"~~\d+?~~", "", para_text)
     cite_paragraph_text = CiteParagraphText(
         text=temp_text
     )

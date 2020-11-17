@@ -1,5 +1,5 @@
 [[source]]
-url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
+url = "https://mirrors.aliyun.com/pypi/simple"
 verify_ssl = true
 name = "pypi"
 
@@ -9,9 +9,9 @@ name = "pypi"
 python_version = "3.7"
 
 [packages]
-requests = "*"
-spacy = "*"
 lxml = "*"
-pandas = "*"
 mongoengine = "*"
-aiomultiprocess = "*"
+jupyter = "*"
+pymongo = "*"
+matplotlib = "*"
+pandas = "*"
