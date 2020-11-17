@@ -1,18 +1,9 @@
 import get_info_from_pmc
 import os
 import re
-# import en_core_web_md
 
-# import time
-
-# nlp = en_core_web_md.load()
-
-rootDir = 'D:\\articles'
-rootDir = '\\Volumes\\Toshiba\\pmc 20191208\\oa_bulk'
-rootDir = 'D:\\articles'
-rootDir = 'F:\\pmc 20191208\\oa_bulk'
+# The users need to change rootDir for their own PMC data directory
 rootDir = 'E:\\pmc 20191208\\oa_bulk'
-# rootDir = 'D:\\test\\test'
 
 def test_count(rootDir):
     print("Running...")
