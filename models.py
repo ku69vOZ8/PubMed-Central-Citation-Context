@@ -5,7 +5,6 @@ from mongoengine import Document
 from mongoengine import StringField
 from mongoengine import ReferenceField
 from mongoengine import IntField
-from mongoengine import ListField
 
 connect('pubmed_central_citation_context')
 
@@ -53,11 +52,6 @@ class CitationContextText(Document):
     }
 
 
-#
-# class CitanceText(CitationContextText):
-#     pass
-
-
 class CiteParagraphText(CitationContextText):
     pass
 
@@ -67,7 +61,8 @@ class CitationContext(Document):
     # And one Cite maps to many CitationContext
     position = IntField()
     cite = ReferenceField("Cite", reverse_delete_rule=CASCADE)
-    citation_context_text = ReferenceField("CitationContextText", reverse_delete_rule=CASCADE)
+    citation_context_text = ReferenceField(
+        "CitationContextText", reverse_delete_rule=CASCADE)
 
     meta = {
         'allow_inheritance': True,
@@ -77,7 +72,3 @@ class CitationContext(Document):
 
 class CiteParagraph(CitationContext):
     pass
-
-#
-# class Citance(CitationContext):
-#     pass

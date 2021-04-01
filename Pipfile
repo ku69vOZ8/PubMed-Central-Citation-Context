@@ -1,17 +1,13 @@
 [[source]]
-url = "https://mirrors.aliyun.com/pypi/simple"
+url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
+
+[packages]
+lxml = "*"
+mongoengine = "*"
 
 [dev-packages]
 
 [requires]
 python_version = "3.7"
-
-[packages]
-lxml = "*"
-mongoengine = "*"
-jupyter = "*"
-pymongo = "*"
-matplotlib = "*"
-pandas = "*"
