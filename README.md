@@ -7,4 +7,4 @@ To use this Python program to generate the citation context datasets from the Pu
 3. use command "pipenv shell"
 4. use command "pipenv install"
 5. change the variable "rootDir" in manage.py to the directory of the PMC papers on your disk
-6. run the program by the command "python3 manage.py" 
+6. run the program by the command "python3 manage.py"
