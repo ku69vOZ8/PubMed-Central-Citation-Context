@@ -1,6 +1,6 @@
 # PubMed-Central-Citation-Context
 
-To use this Python program to generate the data from the PMC paper dataset, the users should follow these steps:
+To use this Python program to generate the citation context from the PubMed Central full text dataset, the users should setup the running environment in the following steps:
 
 1. git clone this repository to your local environment
 2. in the terminal, use command "pip3 install pipenv" 
