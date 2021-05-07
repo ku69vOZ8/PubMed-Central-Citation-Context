@@ -2,7 +2,7 @@
 
 ## How to use the program
 
-To use this Python program to generate the citation context datasets from the PubMed Central full text, the users should setup up the environment with the following steps:
+To use this Python program to generate the citation context datasets from the PubMed Central full text, the users should setup up the environment with the following steps with Python 3.7:
 
 1. git clone this repository to your local disk
 2. in the terminal, use command "pip3 install pipenv" to install pipenv if you do not have pipenv installed
