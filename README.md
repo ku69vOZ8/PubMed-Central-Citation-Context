@@ -1,5 +1,5 @@
 # PubMed-Central-Citation-Context
-by Joseph (Fengjun) Sun
+
 ## How to use the program
 
 To use this Python program to generate the citation context datasets from the PubMed Central full text, the users should setup up the environment with the following steps with Python 3.7:
